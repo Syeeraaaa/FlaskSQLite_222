@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Identitas Diri - Flask App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        {% if about_page %}
+        <div class="about-section">
+            <h1><i class="fas fa-info-circle"></i> Tentang Aplikasi</h1>
+            <div class="card">
+                <p>Aplikasi Identitas Diri CRUD ini dibangun menggunakan:</p>
+                <ul>
+                    <li><i class="fab fa-python"></i> Python Flask</li>
+                    <li><i class="fas fa-database"></i> SQLite Database</li>
+                    <li><i class="fab fa-html5"></i> HTML5</li>
+                    <li><i class="fab fa-css3-alt"></i> CSS3</li>
+                </ul>
+                <p>Fitur yang tersedia:</p>
+                <ul>
+                    <li><i class="fas fa-plus-circle"></i> CREATE: Tambah data identitas</li>
+                    <li><i class="fas fa-eye"></i> READ: Lihat daftar identitas</li>
+                    <li><i class="fas fa-edit"></i> UPDATE: Edit data identitas</li>
+                    <li><i class="fas fa-trash"></i> DELETE: Hapus data identitas</li>
+                </ul>
+                <a href="{{ url_for('index') }}" class="btn"><i class="fas fa-arrow-left"></i> Kembali ke Identitas</a>
+            </div>
+        </div>
+        {% else %}
+        
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">
+                            <i class="fas fa-{% if category == 'success' %}check-circle{% else %}exclamation-circle{% endif %}"></i>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <header class="header">
+            <h1><i class="fas fa-id-card"></i> Daftar Identitas Mahasiswa</h1>
+            <p class="subtitle">Aplikasi CRUD Flask dengan SQLite Database</p>
+            <div class="header-actions">
+                <a href="{{ url_for('add') }}" class="btn btn-primary">
+                    <i class="fas fa-user-plus"></i> Tambah Identitas Baru
+                </a>
+                <a href="{{ url_for('about') }}" class="btn btn-secondary">
+                    <i class="fas fa-info-circle"></i> Tentang Aplikasi
+                </a>
+            </div>
+        </header>
+
+        {% if identitas_list %}
+        <div class="stats">
+            <div class="stat-card">
+                <i class="fas fa-users"></i>
+                <h3>Total Data</h3>
+                <p class="count">{{ identitas_list|length }}</p>
+            </div>
+        </div>
+
+        <div class="data-grid">
+            {% for identitas in identitas_list %}
+            <div class="data-card">
+                <div class="data-card-header">
+                    <div class="avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="data-card-title">
+                        <h3>{{ identitas.nama }}</h3>
+                        <p class="nim">{{ identitas.nim }}</p>
+                    </div>
+                    <div class="data-card-actions">
+                        <span class="badge">{{ identitas.prodi }}</span>
+                    </div>
+                </div>
+                
+                <div class="data-card-content">
+                    <div class="info-row">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>{{ identitas.kelas }}</span>
+                    </div>
+                    
+                    {% if identitas.email %}
+                    <div class="info-row">
+                        <i class="fas fa-envelope"></i>
+                        <span>{{ identitas.email }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if identitas.tanggal_lahir_formatted %}
+                    <div class="info-row">
+                        <i class="fas fa-birthday-cake"></i>
+                        <span>{{ identitas.tanggal_lahir_formatted }}
+                        {% if identitas.usia %}
+                        <span class="age-badge">{{ identitas.usia }} tahun</span>
+                        {% endif %}
+                        </span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if identitas.no_hp %}
+                    <div class="info-row">
+                        <i class="fas fa-phone"></i>
+                        <span>{{ identitas.no_hp }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if identitas.hobi %}
+                    <div class="info-row">
+                        <i class="fas fa-heart"></i>
+                        <span>{{ identitas.hobi }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="data-card-footer">
+                    <a href="{{ url_for('edit', id=identitas.id) }}" class="btn btn-sm btn-edit">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <a href="{{ url_for('delete', id=identitas.id) }}" 
+                       class="btn btn-sm btn-danger"
+                       onclick="return confirm('Hapus data {{ identitas.nama }}?')">
+                        <i class="fas fa-trash"></i> Hapus
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-user-slash"></i>
+            <h2>Belum ada data identitas</h2>
+            <p>Mulai dengan menambahkan data identitas pertama Anda.</p>
+            <a href="{{ url_for('add') }}" class="btn btn-primary">
+                <i class="fas fa-user-plus"></i> Tambah Data Pertama
+            </a>
+        </div>
+        {% endif %}
+
+        <footer class="footer">
+            <p>© 2024 Aplikasi Identitas Diri CRUD | Dibuat dengan Flask & SQLite</p>
+            <div class="footer-info">
+                <span><i class="fas fa-database"></i> Total Data: {{ identitas_list|length if identitas_list else 0 }}</span>
+                <span class="separator">|</span>
+                <span><i class="fas fa-code"></i> Flask CRUD Application</span>
+            </div>
+        </footer>
+        {% endif %}
+    </div>
+</body>
+</html>

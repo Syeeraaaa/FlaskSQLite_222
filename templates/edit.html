@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Identitas - Flask App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-user-edit"></i> Edit Data Identitas</h1>
+            <p class="subtitle">Perbarui data identitas yang sudah ada</p>
+        </header>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">
+                            <i class="fas fa-{% if category == 'success' %}check-circle{% else %}exclamation-circle{% endif %}"></i>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="form-container">
+            <form method="POST" action="{{ url_for('edit', id=id) }}" class="form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="nama">
+                            <i class="fas fa-user"></i> Nama Lengkap *
+                        </label>
+                        <input type="text" id="nama" name="nama" 
+                               value="{{ data['nama'] }}" 
+                               required placeholder="Masukkan nama lengkap">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nim">
+                            <i class="fas fa-id-card"></i> NIM *
+                        </label>
+                        <input type="text" id="nim" name="nim" 
+                               value="{{ data['nim'] }}" 
+                               required placeholder="Masukkan NIM">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prodi">
+                            <i class="fas fa-graduation-cap"></i> Program Studi *
+                        </label>
+                        <input type="text" id="prodi" name="prodi" 
+                               value="{{ data['prodi'] }}" 
+                               required placeholder="Masukkan program studi">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="kelas">
+                            <i class="fas fa-users"></i> Kelas *
+                        </label>
+                        <input type="text" id="kelas" name="kelas" 
+                               value="{{ data['kelas'] }}" 
+                               required placeholder="Contoh: TI-3A, SI-2B">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">
+                            <i class="fas fa-envelope"></i> Email
+                        </label>
+                        <input type="email" id="email" name="email" 
+                               value="{{ data.get('email', '') }}" 
+                               placeholder="nama@example.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tanggal_lahir">
+                            <i class="fas fa-birthday-cake"></i> Tanggal Lahir
+                        </label>
+                        <input type="date" id="tanggal_lahir" name="tanggal_lahir" 
+                               value="{{ data.get('tanggal_lahir', '') }}">
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="alamat">
+                            <i class="fas fa-map-marker-alt"></i> Alamat
+                        </label>
+                        <textarea id="alamat" name="alamat" rows="3" 
+                                  placeholder="Masukkan alamat lengkap">{{ data.get('alamat', '') }}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="no_hp">
+                            <i class="fas fa-phone"></i> Nomor HP
+                        </label>
+                        <input type="tel" id="no_hp" name="no_hp" 
+                               value="{{ data.get('no_hp', '') }}" 
+                               placeholder="08xxxxxxxxxx">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="hobi">
+                            <i class="fas fa-heart"></i> Hobi
+                        </label>
+                        <input type="text" id="hobi" name="hobi" 
+                               value="{{ data.get('hobi', '') }}" 
+                               placeholder="Masukkan hobi">
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-sync-alt"></i> Perbarui Data
+                    </button>
+                    <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Batal
+                    </a>
+                    <a href="{{ url_for('delete', id=id) }}" class="btn btn-danger" 
+                       onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                        <i class="fas fa-trash"></i> Hapus Data
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <footer class="footer">
+            <p>© 2024 Aplikasi Identitas Diri CRUD | Flask & SQLite</p>
+        </footer>
+    </div>
+</body>
+</html>
