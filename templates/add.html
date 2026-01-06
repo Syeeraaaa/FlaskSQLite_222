@@ -1,176 +1,23 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Identitas - Flask App</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
-    <div class="container">
-        <header class="header">
-            <h1><i class="fas fa-user-plus"></i> Tambah Data Identitas</h1>
-            <p class="subtitle">Isi form berikut untuk menambahkan data identitas baru</p>
-        </header>
-
-        <!-- Flash Messages -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <div class="flash-messages">
-                    {% for category, message in messages %}
-                        <div class="flash-message {{ category }}">
-                            <i class="fas fa-{% if category == 'success' %}check-circle{% else %}exclamation-circle{% endif %}"></i>
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        {% endwith %}
-
-        <div class="form-container">
-            <form method="POST" action="{{ url_for('add') }}" class="form">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="nama">
-                            <i class="fas fa-user"></i> Nama Lengkap *
-                        </label>
-                        <input type="text" id="nama" name="nama" 
-                               value="{{ data.nama if data else '' }}" 
-                               required placeholder="Masukkan nama lengkap">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="nim">
-                            <i class="fas fa-id-card"></i> NIM *
-                        </label>
-                        <input type="text" id="nim" name="nim" 
-                               value="{{ data.nim if data else '' }}" 
-                               required placeholder="Masukkan NIM">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="prodi">
-                            <i class="fas fa-graduation-cap"></i> Program Studi *
-                        </label>
-                        <select id="prodi" name="prodi" required>
-                            <option value="">Pilih Program Studi</option>
-                            <option value="Teknik Informatika" {% if data and data.prodi == 'Teknik Informatika' %}selected{% endif %}>
-                                Teknik Informatika
-                            </option>
-                            <option value="Sistem Informasi" {% if data and data.prodi == 'Sistem Informasi' %}selected{% endif %}>
-                                Sistem Informasi
-                            </option>
-                            <option value="Teknik Komputer" {% if data and data.prodi == 'Teknik Komputer' %}selected{% endif %}>
-                                Teknik Komputer
-                            </option>
-                            <option value="Manajemen Informatika" {% if data and data.prodi == 'Manajemen Informatika' %}selected{% endif %}>
-                                Manajemen Informatika
-                            </option>
-                            <option value="other">Lainnya</option>
-                        </select>
-                        <input type="text" id="prodi_other" name="prodi_other" 
-                               class="other-input" 
-                               placeholder="Tulis program studi lainnya"
-                               style="display: none;">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="kelas">
-                            <i class="fas fa-users"></i> Kelas *
-                        </label>
-                        <input type="text" id="kelas" name="kelas" 
-                               value="{{ data.kelas if data else '' }}" 
-                               required placeholder="Contoh: TI-3A, SI-2B">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="email">
-                            <i class="fas fa-envelope"></i> Email
-                        </label>
-                        <input type="email" id="email" name="email" 
-                               value="{{ data.email if data else '' }}" 
-                               placeholder="nama@example.com">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="tanggal_lahir">
-                            <i class="fas fa-birthday-cake"></i> Tanggal Lahir
-                        </label>
-                        <input type="date" id="tanggal_lahir" name="tanggal_lahir" 
-                               value="{{ data.tanggal_lahir if data else '' }}">
-                    </div>
-
-                    <div class="form-group full-width">
-                        <label for="alamat">
-                            <i class="fas fa-map-marker-alt"></i> Alamat
-                        </label>
-                        <textarea id="alamat" name="alamat" rows="3" 
-                                  placeholder="Masukkan alamat lengkap">{{ data.alamat if data else '' }}</textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="no_hp">
-                            <i class="fas fa-phone"></i> Nomor HP
-                        </label>
-                        <input type="tel" id="no_hp" name="no_hp" 
-                               value="{{ data.no_hp if data else '' }}" 
-                               placeholder="08xxxxxxxxxx">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="hobi">
-                            <i class="fas fa-heart"></i> Hobi
-                        </label>
-                        <input type="text" id="hobi" name="hobi" 
-                               value="{{ data.hobi if data else '' }}" 
-                               placeholder="Masukkan hobi">
-                    </div>
-                </div>
-
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Simpan Data
-                    </button>
-                    <a href="{{ url_for('index') }}" class="btn btn-secondary">
-                        <i class="fas fa-times"></i> Batal
-                    </a>
-                </div>
-            </form>
-        </div>
-
-        <footer class="footer">
-            <p>© 2024 Aplikasi Identitas Diri CRUD | Flask & SQLite</p>
-        </footer>
-    </div>
-
-    <script>
-        // JavaScript untuk menangani pilihan "Lainnya" pada dropdown prodi
-        document.getElementById('prodi').addEventListener('change', function() {
-            const otherInput = document.getElementById('prodi_other');
-            if (this.value === 'other') {
-                otherInput.style.display = 'block';
-                otherInput.name = 'prodi';
-                this.name = 'prodi_temp';
-            } else {
-                otherInput.style.display = 'none';
-                otherInput.name = 'prodi_other';
-                this.name = 'prodi';
-            }
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const prodiSelect = document.getElementById('prodi');
-            const prodiOther = document.getElementById('prodi_other');
-            
-            // Jika ada nilai di prodi_other (dari validasi gagal), tampilkan input
-            if (prodiOther.value && !prodiSelect.value) {
-                prodiSelect.value = 'other';
-                prodiOther.style.display = 'block';
-                prodiOther.name = 'prodi';
-                prodiSelect.name = 'prodi_temp';
-            }
-        });
-    </script>
-</body>
-</html>
+<!DOCTYPE html> [cite: 226]
+<html lang="en"> [cite: 227]
+<head> [cite: 228]
+    <meta charset="UTF-8"> [cite: 230]
+    <title>Tambah Buku</title> [cite: 233]
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"> [cite: 234]
+</head> [cite: 235]
+<body> [cite: 236]
+    <div class="container"> [cite: 237]
+        <h1 class="title">Tambah Buku</h1> [cite: 244]
+        <form method="post" class="form"> [cite: 246]
+            <label>Judul:</label> [cite: 238]
+            <input type="text" name="judul" required> [cite: 239]
+            <label>Penulis:</label> [cite: 240]
+            <input type="text" name="penulis" required> [cite: 241]
+            <div class="form-actions"> [cite: 242]
+                <button type="submit" class="btn primary">Simpan</button> [cite: 260]
+                <a href="{{ url_for('index') }}"><button type="button" class="btn">Kembali</button></a> [cite: 261]
+            </div> [cite: 255]
+        </form> [cite: 257]
+    </div> [cite: 258]
+</body> [cite: 259]
+</html> [cite: 262]
