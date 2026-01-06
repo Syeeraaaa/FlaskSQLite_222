@@ -3,7 +3,7 @@ import sqlite3
 from datetime import datetime
 
 app = Flask(__name__)
-app.secret_key = 'identitas_secret_key_123'  # Untuk flash messages
+app.secret_key = 'identitas_secret_key_123'  
 
 def connect_db():
     """Fungsi untuk koneksi ke database SQLite"""
